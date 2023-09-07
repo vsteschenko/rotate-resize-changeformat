@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+import os
+from PIL import Image
+
+input_directory = ''
+output_directory = ''
+
+os.makedirs(output_directory, exist_ok=True)
+
+# Loop through all files in the input directory
+for filename in os.listdir(input_directory):
+    input_path = os.path.join(input_directory, filename)
+    
+    # Check if the file is a valid image (JPEG, TIFF, etc.)
+    try:
+        with Image.open(input_path) as im:
+            # Rotate the image 90° clockwise
+            im = im.rotate(-90, expand=True)
+            
+            # Resize the image to 128x128 pixels (default resampling is NEAREST)
+            im = im.resize((128, 128))
+            
+            # Construct the output path with .jpeg extension
+            output_filename = os.path.splitext(filename)[0] + ".jpeg"
+            output_path = os.path.join(output_directory, output_filename)
+            
+            # Save the processed image in JPEG format
+            im.convert("RGB").save(output_path, "JPEG")
+    except Exception as e:
+        print(f"Skipping {filename} due to error: {e}")
+
+print("Images rotated, resized, and saved in", output_directory)
